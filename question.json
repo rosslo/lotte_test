@@ -1,0 +1,12 @@
+[
+	{
+		"id":1,
+		"heading":"Q1. Write a function that takes a string as input and returns the string reversed.",
+		"defaultValue":"hello"
+	},
+	{
+		"id":2,
+		"heading":"Q2. Given a positive integer num, write a function which returns True if num is a perfect square else False.",
+		"defaultValue":16
+	}
+]

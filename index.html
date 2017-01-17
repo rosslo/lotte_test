@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Front-end Engineer-羅弘智</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.2.1/react.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.2.1/react-dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.18.1/babel.min.js"></script>
+</head>
+<body>
+	<div id="container"></div>
+    <script type="text/babel">
+   	class QuestionList extends React.Component {
+    		constructor(props) {
+		        super(props);
+		        this.callback = this.callback.bind(this);
+		        this.state = {
+		            data: []
+		        }
+		    }
+    		callback(data) {
+				this.setState({data:data});
+			}
+    		loadItemsFromServer(url,callback){
+    			var request = new XMLHttpRequest();
+				request.open('GET', url, true);
+				request.onload = function() {
+				  if (request.status >= 200 && request.status < 400) {
+				    var data = JSON.parse(request.responseText);
+				    callback(data);
+				  } else {
+				    console.log('error');
+				  }
+				};
+				request.send();
+    		}
+    		componentDidMount(){
+				this.loadItemsFromServer('question.json',this.callback);
+    		}
+    		render(){
+    			var questions=[];
+    			this.state.data.map(function(item,index){
+    				questions.push(<Question index={item.id} heading={item.heading} defaultValue={item.defaultValue}/>);
+				}.bind(this));
+    			return(
+    				<div className="question-list">
+				      	{questions}
+				    </div>
+    			);
+    		}
+    	}
+      	class Question extends React.Component {
+      		constructor(){
+      			super();
+      			this.handleChange= this.handleChange.bind(this);
+      			// this.handleOut= this.handleOut.bind(this);
+      		}
+      		handleChange(){
+      			var index = this.props.index;
+      			switch(index){
+      				case 1:
+      					var s = document.getElementById('input1').value;
+      					reverseString(s);
+      					break;
+      				case 2:
+      					var n = parseInt(document.getElementById('input2').value);
+      					isPrefectSquare(n);
+      					break;
+      				default:
+      					console.log('empty index');
+      			}
+      		}
+       		componentDidMount(){
+				this.handleChange();
+    		}
+	    	render(){
+	    		return(
+	    			<div className="question-item">
+	    				<p className="heading">{this.props.heading}</p>
+	    				<label for="input1">Input:</label>
+	    				<input type="text" id={"input"+(this.props.index).toString()} defaultValue={this.props.defaultValue} onChange={this.handleChange.bind(this)}/>
+						<span className="answer" id={"answer"+(this.props.index).toString()}>Answer:</span>
+	    			</div>
+	    		);
+	    	}
+     	}
+        ReactDOM.render(<QuestionList />, document.getElementById('container'));
+		function reverseString(s) {
+		    var result = "";        //存放回傳的字串結果
+		    var array = s.split("");  //把輸入的字串拆成陣列
+		    for(var i = array.length-1 ; i >= 0 ; i--){
+		        result = result + array[i];  //從字串陣列後面開始組回字串
+		    }
+		    document.getElementById('answer1').innerText = "Answer: "+result;
+		    return result;
+		};
+		function isPrefectSquare(n) {
+			if(isNaN(n)){
+				document.getElementById('answer2').innerText = "Please give a number!";
+				document.getElementById('answer2').style.color = "#cc0000";
+			}
+			else if(n<0){
+				document.getElementById('answer2').innerText = "Please give a positive integer number!";
+				document.getElementById('answer2').style.color = "#cc0000";
+			}else{
+				var result = false;
+				var i = 1;
+			    while (n > 0) {
+			        n -= i;
+			        i += 2;  //利用數學公式，完美平方數會等於1+3+5+7+9+.....
+			    }
+			    if(n===0){
+			    	result = true;
+					document.getElementById('answer2').style.color = "green";
+				}else{
+					document.getElementById('answer2').style.color = "#cc0000";
+				}
+				document.getElementById('answer2').innerText = "Answer: "+result.toString();
+			}
+		};
+	</script>
+</body>
+</html>
